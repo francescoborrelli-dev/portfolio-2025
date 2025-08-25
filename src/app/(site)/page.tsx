@@ -5,6 +5,7 @@ import { Reveal } from '@/components/motion/Reveal'
 import { ProjectsPreviewSection } from '@/components/sections/ProjectsPreviewSection'
 import { ExpertiseSection } from '@/components/sections/ExpertiseSection'
 import { FAQSection } from '@/components/faq/FAQSection'
+import { BlogPreviewSection } from '@/components/sections/BlogPreviewSection'
 
 export default function HomePage() {
   return (
@@ -40,6 +41,9 @@ export default function HomePage() {
 
       {/* Expertise */}
       <ExpertiseSection />
+
+      {/* Blog Preview */}
+      <BlogPreviewSection />
 
       {/* FAQ */}
       <FAQSection />

@@ -1,0 +1,270 @@
+---
+title: "Come Ottimizzare le Performance di un'App React"
+description: "Tecniche avanzate e best practices per migliorare le performance delle applicazioni React, dalla gestione dello stato al code splitting."
+date: "2024-01-02"
+image: "/images/placeholder-blog.jpg"
+tags: ["React", "Performance", "Ottimizzazione", "Frontend", "JavaScript"]
+published: true
+featured: false
+---
+
+# Come Ottimizzare le Performance di un'App React
+
+Le performance sono cruciali per l'esperienza utente. Un'app lenta può significare perdita di utenti, conversioni ridotte e un impatto negativo sul business. In questo articolo esploreremo tecniche concrete per ottimizzare le performance delle tue applicazioni React.
+
+## Misurazione: Il Primo Passo
+
+Prima di ottimizzare, devi misurare. Gli strumenti essenziali sono:
+
+### React DevTools Profiler
+```jsx
+import { Profiler } from 'react'
+
+function App() {
+  return (
+    <Profiler id="App" onRender={onRenderCallback}>
+      <MyComponent />
+    </Profiler>
+  )
+}
+
+function onRenderCallback(id, phase, actualDuration) {
+  console.log({ id, phase, actualDuration })
+}
+```
+
+### Web Vitals
+- **LCP (Largest Contentful Paint)**: < 2.5s
+- **FID (First Input Delay)**: < 100ms  
+- **CLS (Cumulative Layout Shift)**: < 0.1
+
+## Tecniche di Ottimizzazione
+
+### 1. Memoization con React.memo
+
+Previene re-render inutili di componenti:
+
+```jsx
+const ExpensiveComponent = React.memo(({ data, onUpdate }) => {
+  // Componente costoso da renderizzare
+  return <div>{/* JSX complesso */}</div>
+}, (prevProps, nextProps) => {
+  // Custom comparison
+  return prevProps.data.id === nextProps.data.id
+})
+```
+
+### 2. useMemo per Calcoli Costosi
+
+```jsx
+function DataVisualization({ data }) {
+  const processedData = useMemo(() => {
+    return data
+      .filter(item => item.active)
+      .map(item => ({ ...item, processed: true }))
+      .sort((a, b) => a.value - b.value)
+  }, [data]) // Ricalcola solo quando data cambia
+
+  return <Chart data={processedData} />
+}
+```
+
+### 3. useCallback per Funzioni Stabili
+
+```jsx
+function Parent({ items }) {
+  const handleItemClick = useCallback((id) => {
+    // Logica di gestione click
+    setSelectedId(id)
+  }, []) // Funzione stabile
+
+  return (
+    <>
+      {items.map(item => (
+        <Item 
+          key={item.id} 
+          item={item} 
+          onClick={handleItemClick} 
+        />
+      ))}
+    </>
+  )
+}
+```
+
+### 4. Code Splitting con Lazy Loading
+
+```jsx
+import { lazy, Suspense } from 'react'
+
+const Dashboard = lazy(() => import('./Dashboard'))
+const Profile = lazy(() => import('./Profile'))
+
+function App() {
+  return (
+    <Suspense fallback={<div>Caricamento...</div>}>
+      <Routes>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+    </Suspense>
+  )
+}
+```
+
+### 5. Ottimizzazione delle Liste
+
+Per liste lunghe, usa la virtualizzazione:
+
+```jsx
+import { FixedSizeList as List } from 'react-window'
+
+function VirtualizedList({ items }) {
+  const Row = ({ index, style }) => (
+    <div style={style}>
+      {items[index].name}
+    </div>
+  )
+
+  return (
+    <List
+      height={600}
+      itemCount={items.length}
+      itemSize={50}
+    >
+      {Row}
+    </List>
+  )
+}
+```
+
+## Gestione dello Stato Efficiente
+
+### Evita Prop Drilling
+Usa Context o una libreria di state management:
+
+```jsx
+// Context Pattern
+const DataContext = createContext()
+
+function DataProvider({ children }) {
+  const [data, setData] = useState(initialData)
+  
+  return (
+    <DataContext.Provider value={{ data, setData }}>
+      {children}
+    </DataContext.Provider>
+  )
+}
+
+// Zustand (libreria leggera)
+import { create } from 'zustand'
+
+const useStore = create((set) => ({
+  count: 0,
+  increment: () => set((state) => ({ count: state.count + 1 })),
+}))
+```
+
+### State Colocation
+Mantieni lo state vicino a dove viene usato:
+
+```jsx
+// ❌ State troppo in alto
+function App() {
+  const [userInput, setUserInput] = useState('')
+  return <Form input={userInput} setInput={setUserInput} />
+}
+
+// ✅ State locale
+function Form() {
+  const [userInput, setUserInput] = useState('')
+  return <input value={userInput} onChange={e => setUserInput(e.target.value)} />
+}
+```
+
+## Bundle Optimization
+
+### Tree Shaking
+Importa solo ciò che usi:
+
+```jsx
+// ❌ Importa tutta la libreria
+import * as lodash from 'lodash'
+
+// ✅ Importa solo le funzioni necessarie
+import { debounce, throttle } from 'lodash'
+```
+
+### Dynamic Imports
+```jsx
+// Carica librerie pesanti solo quando servono
+async function loadChart() {
+  const { Chart } = await import('chart.js')
+  return Chart
+}
+```
+
+## Ottimizzazione delle Immagini
+
+```jsx
+// Next.js Image component
+import Image from 'next/image'
+
+function OptimizedImage() {
+  return (
+    <Image
+      src="/hero.jpg"
+      alt="Hero image"
+      width={1200}
+      height={600}
+      priority // Per immagini above-the-fold
+      placeholder="blur"
+      blurDataURL="data:image/jpeg;base64,..."
+    />
+  )
+}
+```
+
+## Monitoraggio in Produzione
+
+### Web Vitals Tracking
+```jsx
+import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals'
+
+function sendToAnalytics(metric) {
+  // Invia metriche al tuo servizio di analytics
+  gtag('event', metric.name, {
+    value: Math.round(metric.value),
+    metric_id: metric.id,
+  })
+}
+
+getCLS(sendToAnalytics)
+getFID(sendToAnalytics)
+getFCP(sendToAnalytics)
+getLCP(sendToAnalytics)
+getTTFB(sendToAnalytics)
+```
+
+## Checklist delle Performance
+
+- [ ] Usa React DevTools Profiler per identificare bottlenecks
+- [ ] Implementa memoization dove appropriato
+- [ ] Configura code splitting per route principali
+- [ ] Ottimizza liste lunghe con virtualizzazione
+- [ ] Mantieni state locale quando possibile
+- [ ] Implementa lazy loading per immagini e componenti
+- [ ] Monitora Web Vitals in produzione
+- [ ] Usa un bundler moderno (Vite, Webpack 5)
+- [ ] Configura service worker per caching
+
+## Conclusioni
+
+L'ottimizzazione delle performance è un processo continuo. Inizia misurando, identifica i bottlenecks più impattanti, applica le ottimizzazioni appropriate e continua a monitorare.
+
+Ricorda: l'ottimizzazione prematura è la radice di tutti i mali. Ottimizza quando hai dati che lo supportano, non per supposizioni.
+
+---
+
+*Quali tecniche di ottimizzazione usi nei tuoi progetti React? Condividi la tua esperienza!*
