@@ -1,49 +1,48 @@
 import { HeroSection } from '@/components/hero/HeroSection'
-import { Reveal } from '@/components/motion/Reveal'
+import { SocialProofSection } from '@/components/sections/SocialProofSection'
 import { Counter } from '@/components/motion/Counter'
+import { Reveal } from '@/components/motion/Reveal'
+import { ProjectsPreviewSection } from '@/components/sections/ProjectsPreviewSection'
+import { ExpertiseSection } from '@/components/sections/ExpertiseSection'
+import { FAQSection } from '@/components/faq/FAQSection'
 
 export default function HomePage() {
   return (
-    <div className="space-y-24">
+    <div>
       {/* Hero Section */}
       <HeroSection />
 
+      {/* Social Proof */}
+      <SocialProofSection />
+
       {/* Big Number Block */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <Reveal>
-          <div className="text-center">
-            <div className="text-6xl md:text-8xl font-bold text-gradient mb-4">
-              <Counter from={0} to={9991} />
+      <section className="py-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="text-center">
+              <div className="text-6xl md:text-8xl lg:text-9xl font-bold text-gradient mb-6">
+                <Counter from={0} to={9991} />
+              </div>
+              <p className="text-xl md:text-2xl text-foreground/80 mb-4">
+                look-alikes trovati nel mondo
+              </p>
+              <p className="text-foreground/60 max-w-2xl mx-auto">
+                Un numero che dimostra quanto sia unico il nostro approccio 
+                e quanto sia difficile trovare qualcuno che faccia quello che facciamo noi.
+              </p>
             </div>
-            <p className="text-xl text-foreground/80">
-              look-alikes trovati nel mondo
-            </p>
-          </div>
-        </Reveal>
+          </Reveal>
+        </div>
       </section>
 
-      {/* Placeholder sections for now */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <Reveal>
-          <div className="text-center space-y-4">
-            <h2 className="text-4xl font-bold">Progetti in Evidenza</h2>
-            <p className="text-foreground/70 max-w-2xl mx-auto">
-              Una selezione dei miei lavori più recenti e significativi.
-            </p>
-          </div>
-        </Reveal>
-      </section>
+      {/* Projects Preview */}
+      <ProjectsPreviewSection />
 
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <Reveal>
-          <div className="text-center space-y-4">
-            <h2 className="text-4xl font-bold">La Mia Expertise</h2>
-            <p className="text-foreground/70 max-w-2xl mx-auto">
-              Quattro pilastri per costruire la tua presenza digitale.
-            </p>
-          </div>
-        </Reveal>
-      </section>
+      {/* Expertise */}
+      <ExpertiseSection />
+
+      {/* FAQ */}
+      <FAQSection />
     </div>
   )
 }
