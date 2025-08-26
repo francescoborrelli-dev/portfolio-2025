@@ -9,9 +9,9 @@ import { Counter } from '@/components/motion/Counter'
 import { Reveal } from '@/components/motion/Reveal'
 import { Accordion } from '@/components/ui/Accordion'
 import { stagger, heroText, pageTransition } from '@/lib/motion'
-import { getFeaturedProjects, getFeaturedPosts } from '@/lib/content'
+import { getFeaturedProjects } from '@/lib/content'
 import { useEffect, useState } from 'react'
-import type { Project, Post } from '@/lib/content'
+import type { Project } from '@/lib/content'
 
 const brands = [
   'Google', 'Apple', 'Microsoft', 'Amazon', 'Meta', 'Tesla',
@@ -76,16 +76,11 @@ const faqItems = [
 
 export default function HomePage() {
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>([])
-  const [featuredPosts, setFeaturedPosts] = useState<Post[]>([])
 
   useEffect(() => {
     const loadContent = async () => {
-      const [projects, posts] = await Promise.all([
-        getFeaturedProjects(),
-        getFeaturedPosts()
-      ])
+      const projects = await getFeaturedProjects()
       setFeaturedProjects(projects)
-      setFeaturedPosts(posts)
     }
     loadContent()
   }, [])
@@ -376,26 +371,31 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Blog Preview */}
-      <section className="py-24 bg-background">
+      {/* FAQ */}
+      <section className="py-24 bg-background-alt">
         <div className="container mx-auto px-6">
-          <Reveal>
-            <div className="text-center mb-16">
-              <h2 className="font-heading font-bold text-2xl text-foreground mb-4">
-                Approfondimenti
-              </h2>
-              <p className="text-body text-muted max-w-2xl mx-auto">
-                Pensieri, tendenze e strategie dal mondo del design digitale.
-              </p>
-            </div>
-          </Reveal>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            <Reveal>
+              <div>
+                <h2 className="font-heading font-bold text-2xl text-foreground mb-6">
+                  Domande Frequenti
+                </h2>
+                <p className="text-body text-muted leading-relaxed">
+                  Tutto quello che devi sapere sul processo di lavoro e 
+                  su come possiamo collaborare per far crescere il tuo business.
+                </p>
+              </div>
+            </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredPosts.slice(0, 3).map((post, index) => (
-              <Reveal key={post.slug} delay={index * 0.1}>
-                <article className="group cursor-pointer">
-                  <Link href={post.url} className="block">
-                    <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-4 bg-background-alt">
+            <Reveal delay={0.2}>
+              <Accordion items={faqItems} />
+            </Reveal>
+          </div>
+        </div>
+      </section>
+    </motion.div>
+  )
+}
                       <Image
                         src={post.cover}
                         alt={post.title}
