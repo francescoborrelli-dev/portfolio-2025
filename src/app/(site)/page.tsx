@@ -110,7 +110,7 @@ export default function HomePage() {
             >
               <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-gradient-to-br from-background-alt to-background">
                 <Image
-                  src="https://images.unsplash.com/photo-1566753323558-f4e0952af115?w=600&h=750&fit=crop&crop=face"
+                  src="/images/me_serio.png"
                   alt="Francesco Borrelli"
                   fill
                   className="object-cover"

@@ -1,193 +1,193 @@
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import { Reveal } from '@/components/motion/Reveal'
+'use client'
+
+import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ArrowLeft, Calendar, Clock, Tag } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
+import { Reveal } from '@/components/motion/Reveal'
+import { pageTransition } from '@/lib/motion'
 import { getPost, getPosts } from '@/lib/content'
-import { formatDate } from '@/lib/utils'
+import { useEffect, useState } from 'react'
+import { notFound } from 'next/navigation'
+import type { Post } from '@/lib/content'
 
 interface BlogPostPageProps {
-  params: Promise<{
+  params: {
     slug: string
-  }>
+  }
 }
 
-export async function generateStaticParams() {
-  const posts = await getPosts()
-  return posts.map((post) => ({
-    slug: post.slug,
-  }))
-}
+export default function BlogPostPage({ params }: BlogPostPageProps) {
+  const [post, setPost] = useState<Post | null>(null)
+  const [loading, setLoading] = useState(true)
 
-export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
-  const { slug } = await params
-  const post = await getPost(slug)
-  
-  if (!post) {
-    return {
-      title: 'Post Not Found',
+  useEffect(() => {
+    const loadPost = async () => {
+      try {
+        const postData = await getPost(params.slug)
+        if (!postData) {
+          notFound()
+          return
+        }
+        setPost(postData)
+      } catch (error) {
+        console.error('Errore nel caricamento del post:', error)
+        notFound()
+      } finally {
+        setLoading(false)
+      }
     }
-  }
+    loadPost()
+  }, [params.slug])
 
-  return {
-    title: `${post.title} - Francesco Borrelli`,
-    description: post.excerpt,
-    openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      images: [post.cover],
-    },
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    )
   }
-}
-
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { slug } = await params
-  const post = await getPost(slug)
 
   if (!post) {
     notFound()
   }
 
   return (
-    <div className="pt-24">
-      {/* Hero Section */}
-      <section className="py-24 bg-background">
+    <motion.div
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={pageTransition}
+    >
+      <article className="pt-32 md:pt-28 pb-24">
         <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto">
-            <Reveal>
-              <div className="text-center mb-12">
-                <div className="flex items-center justify-center gap-3 mb-6">
-                  <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-small font-medium">
-                    {post.category}
-                  </span>
-                  <span className="text-muted">•</span>
-                  <span className="text-muted text-small">{formatDate(post.date)}</span>
-                  <span className="text-muted">•</span>
-                  <span className="text-muted text-small">{post.readTime} min lettura</span>
-                </div>
-                
-                <h1 className="font-heading font-bold text-hero text-foreground mb-6">
-                  {post.title}
-                </h1>
-                
-                <p className="text-body text-muted max-w-2xl mx-auto leading-relaxed">
-                  {post.excerpt}
-                </p>
+          {/* Back Button */}
+          <Reveal>
+            <div className="mb-8">
+              <Button variant="ghost" asChild>
+                <Link href="/blog" className="flex items-center gap-2">
+                  <ArrowLeft className="w-4 h-4" />
+                  Torna al Blog
+                </Link>
+              </Button>
+            </div>
+          </Reveal>
+
+          {/* Article Header */}
+          <Reveal delay={0.1}>
+            <header className="max-w-4xl mx-auto text-center mb-12">
+              <div className="mb-6">
+                <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                  {post.category}
+                </span>
               </div>
-            </Reveal>
-
-            <Reveal delay={0.2}>
-              <div className="relative aspect-[16/9] rounded-2xl overflow-hidden mb-16">
-                <Image
-                  src={post.cover}
-                  alt={post.title}
-                  fill
-                  className="object-cover"
-                  priority
-                  sizes="(max-width: 768px) 100vw, 80vw"
-                />
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* Article Content */}
-      <section className="py-24 bg-background">
-        <div className="container mx-auto px-6">
-          <div className="max-w-3xl mx-auto">
-            <Reveal>
-              <article className="prose prose-lg max-w-none">
-                <p className="text-body text-muted leading-relaxed mb-8 text-xl">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod 
-                  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
-                  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-
-                <h2 className="font-heading font-bold text-2xl text-foreground mb-6 mt-12">
-                  Il Design System del Futuro
-                </h2>
-                <p className="text-body text-muted leading-relaxed mb-8">
-                  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum 
-                  dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non 
-                  proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-
-                <p className="text-body text-muted leading-relaxed mb-8">
-                  Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium 
-                  doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore 
-                  veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-                </p>
-
-                <h3 className="font-heading font-semibold text-xl text-foreground mb-4 mt-10">
-                  Componenti Riutilizzabili
-                </h3>
-                <p className="text-body text-muted leading-relaxed mb-8">
-                  Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, 
-                  sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-                </p>
-
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-start gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-3 flex-shrink-0"></div>
-                    <span className="text-body text-muted">Design tokens per consistenza cross-platform</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-3 flex-shrink-0"></div>
-                    <span className="text-body text-muted">Componenti modulari e scalabili</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-3 flex-shrink-0"></div>
-                    <span className="text-body text-muted">Documentazione interattiva per sviluppatori</span>
-                  </li>
-                </ul>
-
-                <div className="bg-background-alt rounded-2xl p-8 my-12">
-                  <blockquote className="border-l-4 border-primary pl-6">
-                    <p className="text-body italic text-muted mb-4">
-                      "Un design system ben progettato non è solo una collezione di componenti, 
-                      ma un linguaggio condiviso che permette ai team di creare esperienze 
-                      coerenti e memorabili."
-                    </p>
-                    <footer className="text-small text-muted">
-                      — Francesco Borrelli, Design System Architect
-                    </footer>
-                  </blockquote>
+              
+              <h1 className="font-heading font-bold text-4xl lg:text-6xl text-foreground mb-6 leading-tight">
+                {post.title}
+              </h1>
+              
+              <p className="text-xl text-muted leading-relaxed mb-8">
+                {post.description}
+              </p>
+              
+              <div className="flex items-center justify-center gap-6 text-small text-muted">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  <span>{new Date(post.publishedAt).toLocaleDateString('it-IT', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}</span>
                 </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  <span>{post.readingMinutes} min di lettura</span>
+                </div>
+              </div>
+            </header>
+          </Reveal>
 
-                <h2 className="font-heading font-bold text-2xl text-foreground mb-6 mt-12">
-                  Implementazione Pratica
-                </h2>
-                <p className="text-body text-muted leading-relaxed mb-8">
-                  At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis 
-                  praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias 
-                  excepturi sint occaecati cupiditate non provident.
-                </p>
+          {/* Featured Image */}
+          <Reveal delay={0.2}>
+            <div className="relative aspect-[16/9] rounded-2xl overflow-hidden mb-12 bg-background-alt">
+              <Image
+                src={post.cover}
+                alt={post.title}
+                fill
+                className="object-cover"
+                priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+              />
+            </div>
+          </Reveal>
 
-                <p className="text-body text-muted leading-relaxed mb-8">
-                  Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum 
-                  et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
-                </p>
-
-                <h3 className="font-heading font-semibold text-xl text-foreground mb-4 mt-10">
-                  Best Practices
-                </h3>
-                <p className="text-body text-muted leading-relaxed mb-8">
-                  Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit 
-                  quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est.
-                </p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-12">
-                  <div className="bg-background-alt rounded-xl p-6">
-                    <h4 className="font-heading font-semibold text-foreground mb-3">
-                      Scalabilità
-                    </h4>
-                    <p className="text-body text-muted text-small">
-                      Design tokens e variabili CSS per una facile manutenzione
-                    </p>
+          {/* Article Content */}
+          <Reveal delay={0.3}>
+            <div className="max-w-4xl mx-auto">
+              <div 
+                className="prose-custom prose-lg"
+                dangerouslySetInnerHTML={{ __html: post.body.code }}
+              />
+              
+              {/* Tags */}
+              {post.tags && post.tags.length > 0 && (
+                <div className="mt-12 pt-8 border-t border-border">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Tag className="w-4 h-4 text-muted" />
+                    <span className="text-small font-medium text-foreground">Tag:</span>
                   </div>
-                  <div className="bg-background-alt rounded-xl p-6">
-                    <h4 className="font-heading font-semibold text-foreground mb-3">
+                  <div className="flex flex-wrap gap-2">
+                    {post.tags.map((tag) => (
+                      <span 
+                        key={tag}
+                        className="bg-card text-muted px-3 py-1 rounded-full text-sm hover:bg-primary/10 hover:text-primary transition-colors"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </Reveal>
+
+          {/* Navigation */}
+          <Reveal delay={0.4}>
+            <div className="max-w-4xl mx-auto mt-16 pt-8 border-t border-border">
+              <div className="flex justify-between items-center">
+                <Button variant="secondary" asChild>
+                  <Link href="/blog">
+                    ← Altri Articoli
+                  </Link>
+                </Button>
+                
+                <Button asChild>
+                  <Link href="/contact">
+                    Iniziamo a Collaborare
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </article>
+    </motion.div>
+  )
+}
+
+// Generate static params for known posts
+export async function generateStaticParams() {
+  try {
+    const posts = await getPosts()
+    return posts.map((post) => ({
+      slug: post.slug,
+    }))
+  } catch (error) {
+    console.error('Error generating static params:', error)
+    return []
+  }
+}
                       Accessibilità
                     </h4>
                     <p className="text-body text-muted text-small">
