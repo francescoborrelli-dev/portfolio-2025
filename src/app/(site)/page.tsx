@@ -393,45 +393,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-    </motion.div>
-  )
-}
-                      <Image
-                        src={post.cover}
-                        alt={post.title}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3 text-small text-muted">
-                        <span>{new Date(post.publishedAt).toLocaleDateString('it-IT')}</span>
-                        <span>•</span>
-                        <span>{post.readingMinutes} min di lettura</span>
-                      </div>
-                      <h3 className="font-heading font-semibold text-xl text-foreground group-hover:text-primary transition-colors leading-tight">
-                        {post.title}
-                      </h3>
-                      <p className="text-body text-muted leading-relaxed">
-                        {post.description}
-                      </p>
-                    </div>
-                  </Link>
-                </article>
-              </Reveal>
-            </div>
-          </div>
-
-          <Reveal delay={0.3}>
-            <div className="text-center mt-12">
-              <Button asChild variant="secondary" size="lg">
-                <Link href="/blog">Leggi Altri Articoli</Link>
-              </Button>
-            </div>
-          </Reveal>
-        </div>
-      </section>
 
       {/* FAQ */}
       <section className="py-24 bg-background-alt">
