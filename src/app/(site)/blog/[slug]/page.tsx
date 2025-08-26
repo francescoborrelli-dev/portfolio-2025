@@ -7,7 +7,7 @@ import { ArrowLeft, Calendar, Clock, Tag } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Reveal } from '@/components/motion/Reveal'
 import { pageTransition } from '@/lib/motion'
-import { getPost, getPosts } from '@/lib/content'
+import { getPost } from '@/lib/content'
 import { useEffect, useState } from 'react'
 import { notFound } from 'next/navigation'
 import type { Post } from '@/lib/content'
@@ -174,17 +174,4 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
       </article>
     </motion.div>
   )
-}
-
-// Generate static params for known posts
-export async function generateStaticParams() {
-  try {
-    const posts = await getPosts()
-    return posts.map((post) => ({
-      slug: post.slug,
-    }))
-  } catch (error) {
-    console.error('Error generating static params:', error)
-    return []
-  }
 }
