@@ -216,30 +216,3 @@ export async function generateStaticParams() {
     return []
   }
 }
-              <h2 className="font-heading font-bold text-2xl text-foreground mb-8">
-                Prossimo Progetto
-              </h2>
-              <Link 
-                href="/projects/brand-identity-refresh"
-                className="group block max-w-md mx-auto"
-              >
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4">
-                  <Image
-                    src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=400&h=300&fit=crop"
-                    alt="Brand Identity Refresh"
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    sizes="400px"
-                  />
-                </div>
-                <h3 className="font-heading font-semibold text-xl text-foreground group-hover:text-primary transition-colors">
-                  Brand Identity Refresh
-                </h3>
-              </Link>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-    </div>
-  )
-}
