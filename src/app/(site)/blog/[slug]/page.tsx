@@ -7,7 +7,7 @@ import { ArrowLeft, Calendar, Clock, Tag } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Reveal } from '@/components/motion/Reveal'
 import { pageTransition } from '@/lib/motion'
-import { getPost } from '@/lib/content'
+import { getPost, getPosts } from '@/lib/content'
 import { useEffect, useState } from 'react'
 import { notFound } from 'next/navigation'
 import type { Post } from '@/lib/content'
@@ -94,7 +94,11 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
               <div className="flex items-center justify-center gap-6 text-small text-muted">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
-                  <span>{new Date(post.publishedAt).toLocaleDateString('it-IT')}</span>
+                  <span>{new Date(post.publishedAt).toLocaleDateString('it-IT', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4" />
@@ -113,7 +117,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
                 fill
                 className="object-cover"
                 priority
-                sizes="(max-width: 768px) 100vw, 1200px"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
               />
             </div>
           </Reveal>
@@ -125,26 +129,22 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
                 className="prose-custom prose-lg"
                 dangerouslySetInnerHTML={{ __html: post.body.code }}
               />
-            </div>
-          </Reveal>
-        </div>
-      </article>
-    </motion.div>
-  )
-}
-
-// Generate static params for known posts
-export async function generateStaticParams() {
-  try {
-    const posts = await getPosts()
-    return posts.map((post) => ({
-      slug: post.slug,
-    }))
-  } catch (error) {
-    console.error('Error generating static params:', error)
-    return []
-  }
-}
+              
+              {/* Tags */}
+              {post.tags && post.tags.length > 0 && (
+                <div className="mt-12 pt-8 border-t border-border">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Tag className="w-4 h-4 text-muted" />
+                    <span className="text-small font-medium text-foreground">Tag:</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {post.tags.map((tag) => (
+                      <span 
+                        key={tag}
+                        className="bg-card text-muted px-3 py-1 rounded-full text-sm hover:bg-primary/10 hover:text-primary transition-colors"
+                      >
+                        {tag}
+                      </span>
                     ))}
                   </div>
                 </div>
