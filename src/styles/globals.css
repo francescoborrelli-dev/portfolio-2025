@@ -1,0 +1,208 @@
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-Variable.woff2') format('woff2');
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 11 11 12;
+    --foreground: 245 246 247;
+    --card: 17 18 21;
+    --card-foreground: 245 246 247;
+    --popover: 17 18 21;
+    --popover-foreground: 245 246 247;
+    --primary: 230 0 38;
+    --primary-foreground: 244 241 232;
+    --secondary: 46 47 51;
+    --secondary-foreground: 245 246 247;
+    --muted: 158 163 170;
+    --muted-foreground: 158 163 170;
+    --accent: 46 47 51;
+    --accent-foreground: 245 246 247;
+    --destructive: 239 68 68;
+    --destructive-foreground: 248 250 252;
+    --border: 35 36 39;
+    --input: 35 36 39;
+    --ring: 46 47 51;
+    --radius: 0.5rem;
+  }
+
+  .light {
+    --background: 255 255 255;
+    --foreground: 13 14 15;
+    --card: 255 255 255;
+    --card-foreground: 13 14 15;
+    --popover: 255 255 255;
+    --popover-foreground: 13 14 15;
+    --primary: 230 0 38;
+    --primary-foreground: 255 255 255;
+    --secondary: 245 245 245;
+    --secondary-foreground: 13 14 15;
+    --muted: 115 115 115;
+    --muted-foreground: 115 115 115;
+    --accent: 245 245 245;
+    --accent-foreground: 13 14 15;
+    --destructive: 239 68 68;
+    --destructive-foreground: 255 255 255;
+    --border: 229 229 229;
+    --input: 229 229 229;
+    --ring: 158 158 158;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Animation utilities */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  .animate-slide-in-up {
+    animation: slideInUp 0.6s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out;
+  }
+
+  /* Custom scrollbar */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-background-alt;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-muted rounded-full;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-ring;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Focus styles */
+.focus-visible:focus-visible {
+  @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+}
+
+/* Typography styles */
+.prose-custom {
+  @apply prose prose-lg prose-invert max-w-none;
+}
+
+.prose-custom h1,
+.prose-custom h2,
+.prose-custom h3,
+.prose-custom h4,
+.prose-custom h5,
+.prose-custom h6 {
+  @apply font-heading;
+}
+
+.prose-custom p {
+  @apply text-body leading-relaxed;
+}
+
+.prose-custom a {
+  @apply text-primary hover:text-primary/80 transition-colors;
+}
+
+.prose-custom blockquote {
+  @apply border-l-4 border-primary bg-card pl-6 py-4 rounded-r-lg;
+}
+
+.prose-custom code {
+  @apply bg-card px-2 py-1 rounded text-sm;
+}
+
+.prose-custom pre {
+  @apply bg-card border border-border rounded-lg p-6 overflow-x-auto;
+}
