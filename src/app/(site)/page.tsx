@@ -420,7 +420,7 @@ export default function HomePage() {
                   </Link>
                 </article>
               </Reveal>
-            ))}
+            </div>
           </div>
 
           <Reveal delay={0.3}>
