@@ -1,221 +1,221 @@
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import { Reveal } from '@/components/motion/Reveal'
+'use client'
+
+import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ArrowLeft, Calendar } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
+import { Reveal } from '@/components/motion/Reveal'
+import { pageTransition } from '@/lib/motion'
 import { getProject, getProjects } from '@/lib/content'
+import { useEffect, useState } from 'react'
+import { notFound } from 'next/navigation'
+import type { Project } from '@/lib/content'
 
 interface ProjectPageProps {
-  params: Promise<{
+  params: {
     slug: string
-  }>
+  }
 }
 
-export async function generateStaticParams() {
-  const projects = await getProjects()
-  return projects.map((project) => ({
-    slug: project.slug,
-  }))
-}
+export default function ProjectPage({ params }: ProjectPageProps) {
+  const [project, setProject] = useState<Project | null>(null)
+  const [loading, setLoading] = useState(true)
 
-export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
-  const { slug } = await params
-  const project = await getProject(slug)
-  
-  if (!project) {
-    return {
-      title: 'Project Not Found',
+  useEffect(() => {
+    const loadProject = async () => {
+      try {
+        const projectData = await getProject(params.slug)
+        if (!projectData) {
+          notFound()
+          return
+        }
+        setProject(projectData)
+      } catch (error) {
+        console.error('Errore nel caricamento del progetto:', error)
+        notFound()
+      } finally {
+        setLoading(false)
+      }
     }
-  }
+    loadProject()
+  }, [params.slug])
 
-  return {
-    title: `${project.title} - Francesco Borrelli`,
-    description: project.description,
-    openGraph: {
-      title: project.title,
-      description: project.description,
-      images: [project.cover],
-    },
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    )
   }
-}
-
-export default async function ProjectPage({ params }: ProjectPageProps) {
-  const { slug } = await params
-  const project = await getProject(slug)
 
   if (!project) {
     notFound()
   }
 
   return (
-    <div className="pt-24">
-      {/* Hero Section */}
-      <section className="py-24 bg-background">
+    <motion.div
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={pageTransition}
+    >
+      <article className="pt-32 md:pt-28 pb-24">
         <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto">
-            <Reveal>
-              <div className="text-center mb-12">
-                <div className="flex items-center justify-center gap-3 mb-6">
-                  <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-small font-medium">
-                    {project.category}
-                  </span>
-                  <span className="text-muted">•</span>
-                  <span className="text-muted text-small">{project.year}</span>
-                </div>
-                
-                <h1 className="font-heading font-bold text-hero text-foreground mb-6">
-                  {project.title}
-                </h1>
-                
-                <p className="text-body text-muted max-w-2xl mx-auto leading-relaxed">
-                  {project.description}
-                </p>
+          {/* Back Button */}
+          <Reveal>
+            <div className="mb-8">
+              <Button variant="ghost" asChild>
+                <Link href="/projects" className="flex items-center gap-2">
+                  <ArrowLeft className="w-4 h-4" />
+                  Torna ai Progetti
+                </Link>
+              </Button>
+            </div>
+          </Reveal>
+
+          {/* Project Header */}
+          <Reveal delay={0.1}>
+            <header className="max-w-4xl mx-auto text-center mb-12">
+              <div className="mb-6">
+                <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                  {project.category}
+                </span>
               </div>
-            </Reveal>
-
-            <Reveal delay={0.2}>
-              <div className="relative aspect-video rounded-2xl overflow-hidden mb-16">
-                <Image
-                  src={project.cover}
-                  alt={project.title}
-                  fill
-                  className="object-cover"
-                  priority
-                  sizes="(max-width: 768px) 100vw, 80vw"
-                />
+              
+              <h1 className="font-heading font-bold text-4xl lg:text-6xl text-foreground mb-6 leading-tight">
+                {project.title}
+              </h1>
+              
+              <p className="text-xl text-muted leading-relaxed mb-8">
+                {project.description}
+              </p>
+              
+              <div className="flex items-center justify-center gap-6 text-small text-muted">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  <span>{project.year}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span>Ruolo: {project.role}</span>
+                </div>
               </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
+            </header>
+          </Reveal>
 
-      {/* Project Details */}
-      <section className="py-24 bg-background-alt">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-16">
-            {/* Sidebar */}
-            <div className="lg:col-span-1">
-              <div className="sticky top-32 space-y-8">
+          {/* Featured Image */}
+          <Reveal delay={0.2}>
+            <div className="relative aspect-[16/9] rounded-2xl overflow-hidden mb-12 bg-background-alt">
+              <Image
+                src={project.cover}
+                alt={project.title}
+                fill
+                className="object-cover"
+                priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+              />
+            </div>
+          </Reveal>
+
+          {/* Project Details */}
+          <Reveal delay={0.3}>
+            <div className="max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                 <div>
-                  <h3 className="font-heading font-semibold text-foreground mb-4">
-                    Il Mio Ruolo
-                  </h3>
-                  <p className="text-body text-muted">
-                    {project.role}
-                  </p>
+                  <h3 className="font-heading font-semibold text-foreground mb-3">Anno</h3>
+                  <p className="text-body text-muted">{project.year}</p>
                 </div>
-
                 <div>
-                  <h3 className="font-heading font-semibold text-foreground mb-4">
-                    Anno
-                  </h3>
-                  <p className="text-body text-muted">
-                    {project.year}
-                  </p>
+                  <h3 className="font-heading font-semibold text-foreground mb-3">Ruolo</h3>
+                  <p className="text-body text-muted">{project.role}</p>
                 </div>
-
                 <div>
-                  <h3 className="font-heading font-semibold text-foreground mb-4">
-                    Tecnologie
-                  </h3>
-                  <div className="space-y-2">
-                    {project.stack.map((tech: string) => (
-                      <div key={tech} className="bg-card px-3 py-1 rounded text-small text-muted">
+                  <h3 className="font-heading font-semibold text-foreground mb-3">Categoria</h3>
+                  <p className="text-body text-muted">{project.category}</p>
+                </div>
+              </div>
+
+              {/* Tech Stack */}
+              {project.stack && project.stack.length > 0 && (
+                <div className="mb-12">
+                  <h3 className="font-heading font-semibold text-foreground mb-4">Tecnologie Utilizzate</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {project.stack.map((tech) => (
+                      <span 
+                        key={tech}
+                        className="bg-card text-muted px-3 py-1 rounded-full text-sm"
+                      >
                         {tech}
-                      </div>
+                      </span>
                     ))}
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Main Content */}
-            <div className="lg:col-span-3">
-              <Reveal>
-                <div className="prose prose-lg max-w-none">
-                  <h2 className="font-heading font-bold text-2xl text-foreground mb-6">
-                    La Sfida
-                  </h2>
-                  <p className="text-body text-muted leading-relaxed mb-8">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod 
-                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
-                    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                  </p>
-
-                  <h2 className="font-heading font-bold text-2xl text-foreground mb-6">
-                    La Soluzione
-                  </h2>
-                  <p className="text-body text-muted leading-relaxed mb-8">
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum 
-                    dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non 
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                  </p>
-
-                  {/* Gallery */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-12">
-                    {project.gallery?.slice(0, 4).map((image: string, index: number) => (
-                      <div key={index} className="relative aspect-video rounded-xl overflow-hidden">
+              )}
+              
+              {/* Project Content */}
+              <div 
+                className="prose-custom prose-lg"
+                dangerouslySetInnerHTML={{ __html: project.body.code }}
+              />
+              
+              {/* Gallery */}
+              {project.gallery && project.gallery.length > 0 && (
+                <div className="mt-12">
+                  <h3 className="font-heading font-semibold text-2xl text-foreground mb-6">Gallery</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {project.gallery.map((image, index) => (
+                      <div key={index} className="relative aspect-[16/10] rounded-xl overflow-hidden bg-background-alt">
                         <Image
                           src={image}
-                          alt={`${project.title} screenshot ${index + 1}`}
+                          alt={`${project.title} - Immagine ${index + 1}`}
                           fill
                           className="object-cover"
                           sizes="(max-width: 768px) 100vw, 50vw"
                         />
                       </div>
-                    )) || (
-                      // Fallback gallery if no images
-                      <>
-                        <div className="relative aspect-video rounded-xl overflow-hidden bg-background">
-                          <div className="absolute inset-0 flex items-center justify-center text-muted">
-                            Gallery Image 1
-                          </div>
-                        </div>
-                        <div className="relative aspect-video rounded-xl overflow-hidden bg-background">
-                          <div className="absolute inset-0 flex items-center justify-center text-muted">
-                            Gallery Image 2
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  <h2 className="font-heading font-bold text-2xl text-foreground mb-6">
-                    Risultati
-                  </h2>
-                  <p className="text-body text-muted leading-relaxed mb-8">
-                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium 
-                    doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore 
-                    veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-                  </p>
-
-                  {/* Results Stats */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-12">
-                    <div className="bg-card p-6 rounded-xl text-center">
-                      <div className="text-3xl font-bold text-primary mb-2">+150%</div>
-                      <div className="text-small text-muted">Crescita Conversioni</div>
-                    </div>
-                    <div className="bg-card p-6 rounded-xl text-center">
-                      <div className="text-3xl font-bold text-primary mb-2">-40%</div>
-                      <div className="text-small text-muted">Riduzione Bounce Rate</div>
-                    </div>
-                    <div className="bg-card p-6 rounded-xl text-center">
-                      <div className="text-3xl font-bold text-primary mb-2">98%</div>
-                      <div className="text-small text-muted">Soddisfazione Cliente</div>
-                    </div>
+                    ))}
                   </div>
                 </div>
-              </Reveal>
+              )}
             </div>
-          </div>
-        </div>
-      </section>
+          </Reveal>
 
-      {/* Next Project */}
-      <section className="py-24 bg-background">
-        <div className="container mx-auto px-6">
-          <Reveal>
-            <div className="text-center">
+          {/* Navigation */}
+          <Reveal delay={0.4}>
+            <div className="max-w-4xl mx-auto mt-16 pt-8 border-t border-border">
+              <div className="flex justify-between items-center">
+                <Button variant="secondary" asChild>
+                  <Link href="/projects">
+                    ← Altri Progetti
+                  </Link>
+                </Button>
+                
+                <Button asChild>
+                  <Link href="/contact">
+                    Iniziamo a Collaborare
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </article>
+    </motion.div>
+  )
+}
+
+// Generate static params for known projects
+export async function generateStaticParams() {
+  try {
+    const projects = await getProjects()
+    return projects.map((project) => ({
+      slug: project.slug,
+    }))
+  } catch (error) {
+    console.error('Error generating static params:', error)
+    return []
+  }
+}
               <h2 className="font-heading font-bold text-2xl text-foreground mb-8">
                 Prossimo Progetto
               </h2>

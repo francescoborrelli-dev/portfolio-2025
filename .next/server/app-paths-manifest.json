@@ -4,6 +4,6 @@
   "/(site)/page": "app/(site)/page.js",
   "/(site)/contact/page": "app/(site)/contact/page.js",
   "/(site)/expertise/page": "app/(site)/expertise/page.js",
-  "/(site)/blog/page": "app/(site)/blog/page.js",
-  "/(site)/projects/page": "app/(site)/projects/page.js"
+  "/(site)/projects/page": "app/(site)/projects/page.js",
+  "/(site)/blog/page": "app/(site)/blog/page.js"
 }
