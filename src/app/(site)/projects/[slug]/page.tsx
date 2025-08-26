@@ -7,7 +7,7 @@ import { ArrowLeft, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Reveal } from '@/components/motion/Reveal'
 import { pageTransition } from '@/lib/motion'
-import { getProject, getProjects } from '@/lib/content'
+import { getProject } from '@/lib/content'
 import { useEffect, useState } from 'react'
 import { notFound } from 'next/navigation'
 import type { Project } from '@/lib/content'
@@ -202,17 +202,4 @@ export default function ProjectPage({ params }: ProjectPageProps) {
       </article>
     </motion.div>
   )
-}
-
-// Generate static params for known projects
-export async function generateStaticParams() {
-  try {
-    const projects = await getProjects()
-    return projects.map((project) => ({
-      slug: project.slug,
-    }))
-  } catch (error) {
-    console.error('Error generating static params:', error)
-    return []
-  }
 }
