@@ -1,9 +1,7 @@
 {
-  "/manifest.webmanifest/route": "app/manifest.webmanifest/route.js",
   "/_not-found/page": "app/_not-found/page.js",
+  "/manifest.webmanifest/route": "app/manifest.webmanifest/route.js",
   "/(site)/page": "app/(site)/page.js",
-  "/(site)/contact/page": "app/(site)/contact/page.js",
-  "/(site)/expertise/page": "app/(site)/expertise/page.js",
   "/(site)/projects/page": "app/(site)/projects/page.js",
-  "/(site)/blog/page": "app/(site)/blog/page.js"
+  "/(site)/projects/[slug]/page": "app/(site)/projects/[slug]/page.js"
 }

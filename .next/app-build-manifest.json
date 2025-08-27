@@ -36,35 +36,15 @@
       "static/chunks/main-app.js",
       "static/chunks/app/manifest.webmanifest/route.js"
     ],
-    "/(site)/contact/page": [
+    "/(site)/projects/[slug]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/(site)/contact/page.js"
+      "static/chunks/app/(site)/projects/[slug]/page.js"
     ],
-    "/(site)/about/page": [
+    "/_not-found/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/(site)/about/page.js"
-    ],
-    "/(site)/blog/loading": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(site)/blog/loading.js"
-    ],
-    "/(site)/blog/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(site)/blog/page.js"
-    ],
-    "/(site)/expertise/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(site)/expertise/page.js"
-    ],
-    "/(site)/blog/[slug]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(site)/blog/[slug]/page.js"
+      "static/chunks/app/_not-found/page.js"
     ]
   }
 }
