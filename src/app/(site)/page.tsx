@@ -393,9 +393,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* FAQ */}
-      <section className="py-24 bg-background-alt">
+    </motion.div>
+  )
+}
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             <Reveal>
